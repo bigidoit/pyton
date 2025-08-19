@@ -1,0 +1,10 @@
+# ask for age
+age = int(input("What is your age "))
+
+# check if age is legal for drinking
+if age < 21:
+print("you are too young to drink")
+elif age >= 21 and age <= 100:
+print("you can drink")
+else:
+print("invalid input")
