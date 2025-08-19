@@ -1,0 +1,9 @@
+# set up the variable used for guessing
+month = ""
+# keep prompting for the month as long as it does not equate to june
+while month.lower() != "june":
+month = input("Guess the month: ")
+if month.lower() != "june":
+print("Wrong")
+# guess is equal to june
+print("Correct")
