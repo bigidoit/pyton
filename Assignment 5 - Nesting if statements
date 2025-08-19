@@ -6,4 +6,4 @@ if school.lower() == "marshall":
   grade = input("What grade are you in ").lower()
 
   if grade == "freshman" or grade == "sophomore" or grade == "junior" or grade == "senior":
-  print("an appropriate greeting")
+    print("an appropriate greeting")
