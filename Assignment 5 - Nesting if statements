@@ -1,0 +1,9 @@
+# ask for school
+school = input("What school do you go to ")
+
+# if school is marshall, ask for grade
+if school.lower() == "marshall":
+  grade = input("What grade are you in ").lower()
+
+  if grade == "freshman" or grade == "sophomore" or grade == "junior" or grade == "senior":
+  print("an appropriate greeting")
