@@ -1,14 +1,14 @@
-#ask for country
+# ask for country
 country = input("What country do you most want to visit?").lower()
 
-#check if country is recognized as an answer or not
+# check if country is recognized as an answer or not
 if country == "england":
-print("Wanker")
+  print("Wanker")
 elif country == "france":
-print("Ravi de vous rencontrer")
+  print("Ravi de vous rencontrer")
 elif country == "mexico":
-print("Hola")
+  print("Hola")
 elif country == "canada":
-print("wahoo!!!")
+  print("wahoo!!!")
 else:
-print("brid")
+  print("brid")
