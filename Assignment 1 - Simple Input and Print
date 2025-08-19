@@ -1,0 +1,35 @@
+# required questions
+info = {
+"fn": "What is your first name?",
+"mi": "What is your middle initial? (enter _ if N/A)",
+"ln": "What is your last name?",
+"snum": "What is your street number?",
+"sname": "What is your street name?",
+"city": "What is your city?",
+"state": "What is your state?",
+"zc": "What is your zipcode?",
+"cell": "What is your cellphone number?",
+"email": "What is your email?"
+}
+# convert the values of the keys to their answers
+for i, v in info.items():
+answer = input(v)
+info[i] = answer
+""" ignore this
+print(" ".join([info["fn"], info["mi"], info["ln"]]))
+print(" ".join([info["snum"], info["sname"]]))
+print(" ".join([info["city"], info["state"], info["zc"]]) + "\n")
+print(info["email"])
+print(info["cell"])
+"""
+# print all answers
+print(info["fn"], end = "")
+print(info["mi"], end = "")
+print(info["ln"])
+print(info["snum"], end = "")
+print(info["sname"])
+print(info["city"], end = "")
+print(info["state"], end = "")
+print(info["zc"] + "\n")
+print(info["email"])
+print(info["cell"])
