@@ -1,0 +1,13 @@
+# import required modules
+import time
+
+# prompt for positive integer
+integer = abs(int(input("enter a positive integer ")))
+
+# count down
+for num in range(integer, 1 - 1, -1):
+  print(num)
+  time.sleep(1)
+
+# print blast off
+print("blast off")
