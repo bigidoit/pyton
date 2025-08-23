@@ -1,0 +1,17 @@
+# prompt for positive integer
+integer = abs(int(input("enter a positive integer ")))
+
+# create multiplication table
+print("X", end = "\t")
+
+for x in range(1, integer + 1):
+  print(str(x) + "x", end = "\t")
+  print()
+
+for y in range(1, integer + 1):
+  print(str(y) + "x", end = "\t")
+
+  for x in range(1, integer + 1):
+    print(x * y, end = "\t")
+
+  print()
