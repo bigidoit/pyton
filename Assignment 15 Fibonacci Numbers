@@ -1,0 +1,18 @@
+# prompt for positive integer
+integer = abs(int(input("enter a positive integer ")))
+
+# do fibonacci
+lastNumber = 0
+currentNumber = 1
+
+for _ in range(0, integer + 1):
+  if currentNumber > integer:
+    break
+
+  num = currentNumber
+
+  currentNumber += lastNumber
+  lastNumber = num
+
+# print final number
+print(currentNumber)
