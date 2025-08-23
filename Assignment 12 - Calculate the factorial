@@ -1,0 +1,11 @@
+# prompt for positive integer
+integer = abs(int(input("enter a positive integer ")))
+
+# calculate factorial
+factorial = 1
+
+for num in range(integer, 1 - 1, -1):
+  factorial *= num
+
+# print the result
+print(str(integer) + "! = " + str(factorial))
