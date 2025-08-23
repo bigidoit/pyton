@@ -1,0 +1,33 @@
+# grades and their minimum mark requirement
+grades = {
+"A": 90,
+"B": 80,
+"C": 70,
+"F": 0,
+}
+
+# ask for mark and max possible mark
+mark = int(input("What mark did you get on your assignment "))
+maxMark = int(input("What was the highest mark you could have gotten "))
+
+# get percentage score
+percent = (mark/maxMark) * 100
+
+#check received grade and print it out
+if percent >= 90:
+  print("You got an A")
+elif percent >= 80:
+  print("You got a B")
+elif percent >= 70:
+  print("You got a C")
+else:
+  print("You got an F")
+
+""" alternative solution
+# check received grade and print it out
+for letter, grade in grades.items():
+  if percent >= grade:
+  print("You got a " + letter)
+
+  break
+"""
