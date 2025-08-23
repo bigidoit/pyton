@@ -1,0 +1,12 @@
+# initialize variables
+sum = 0
+product = 1
+
+# calculate sum and product
+for num in range(10, 20 + 1):
+  sum += num
+  product *= num
+
+# print results
+print("sum is " + str(sum))
+print("product is " + str(product))
