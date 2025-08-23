@@ -1,0 +1,3 @@
+# print 50 times
+for _ in range(50):
+  print("python is fun")
