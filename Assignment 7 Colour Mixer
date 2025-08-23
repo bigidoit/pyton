@@ -1,0 +1,25 @@
+# prompt for two primary colors
+color1 = input("Enter red blue or yellow ").lower()
+color2 = input("Enter red blue or yellow ").lower()
+
+# stop program if inputs are not primary colors
+if (color1 != "red" and color1 != "blue" and color1 != "yellow") or (color2 != "red"
+and color2 != "blue" and color2 != "yellow"):
+  raise Exception("No")
+
+# determine what secondary color is formed when the colors are mixed
+if color1 == color2:
+  print(color1)
+elif color1 == "red":
+  if color2 == "blue":
+    print("purple")
+  elif color2 == "yellow":
+    print("orange")
+  elif (color1 == "blue" and color2 == "yellow") or (color2 == "blue" and color1 ==
+"yellow"):
+    print("green")
+elif color2 == "red":
+  if color1 == "blue":
+    print("purple")
+  elif color1 == "yellow":
+    print("orange")
