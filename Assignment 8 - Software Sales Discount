@@ -1,0 +1,23 @@
+# regular package price
+PRICE = 99
+
+# prompt for number of packages purchased
+amount = int(input("How many packages did you buy "))
+
+#determine the discount
+discount = 0
+
+if amount >= 100:
+  discount = 40
+elif amount >= 50:
+  discount = 30
+elif amount >= 20:
+  discount = 20
+elif amount >= 10:
+  discount = 10
+
+# calculate and print receipt
+total = PRICE*amount
+
+print("your discount is " + str(discount) + "%")
+print("your total after the discount is $" + str(total - total*discount/100))
