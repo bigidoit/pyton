@@ -1,0 +1,17 @@
+# import needed modules
+import random
+
+# generate number to guess
+answer = random.randrange(1, 100 + 1)
+
+# prompt for number
+num = int(input("What is the number 1-100 "))
+
+# keep prompting user to guess until they get the answer
+while num != answer:
+  if num < answer:
+    num = int(input("Too lo try again "))
+  else:
+    num = int(input("Too hi try again "))
+
+print("You got it")
