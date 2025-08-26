@@ -1,7 +1,7 @@
 # prompt for positive integer
 integer = abs(int(input("enter a positive integer ")))
 
-# do fibonacci
+# do fibonacci (numbers that get added won't be higher than inputted integer)
 lastNumber = 0
 currentNumber = 1
 
