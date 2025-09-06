@@ -1,0 +1,50 @@
+# in a file named phone.py
+class Cellphone:
+  # initialize a phone with given manufacturer, model, and price
+  def __init__(self, manufact, model, price):
+    self.__manufact = manufact
+    self.__model = model
+    self.__price = price
+
+  # return manufacturer
+  def getManufact(self):
+    return self.__manufact
+
+  # change manufacturer
+  def setManufact(self, manufact):
+    self.__manufact = manufact
+
+  # return model
+  def getModel(self):
+    return self.__model
+
+  # change model
+  def setModel(self, model):
+    self.__model = model
+
+  # return price
+  def getPrice(self):
+    return self.__price
+
+  # change price
+  def setPrice(self, price):
+    self.__price = price
+
+
+# in another file
+import phone
+
+def main():
+  phoneList = []
+  for i in range(5):
+    manuf = input("who makes your phone: ")
+    mod = input("what is your phone's model: ")
+    price = float(input("how much does your phone cost: "))
+    myPhone = phone.Cellphone(manuf, mod, price)
+    phoneList.append(myPhone)
+
+  for phoner in phoneList:
+    print("Your phone maker is", phoner.getManufact())
+    print("Your phone is", phoner.getModel())
+    print("Your phone costs", f"${phoner.getPrice():.2f}")
+  mai
