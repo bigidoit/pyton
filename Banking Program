@@ -1,0 +1,52 @@
+# separate file named bank.py
+class BankAccount():
+  # initialize a bank account with the specified balance
+  def __init__(self, bal):
+    self.__balance = bal
+
+  # deposit a specified amount of money
+  def deposit(self, amount):
+    self.__balance += amount
+    print(f"Deposited ${amount:.2f}")
+
+  # withdraw specified amount of money if possible
+  def withdraw(self, amount):
+    if self.__balance >= amount and amount >= 0:
+      self.__balance -= amount
+      print(f"Withdrew ${amount:.2f}")
+    else:
+      print("Insufficient funds or invalid amount")
+
+  # return amount of money in account
+  def get_balance(self):
+    return self.__balance
+
+  # string representation of the money in the account
+  def __str__(self):
+    return f"Your account balance is ${self.__balance:.2f}"
+
+
+
+# separate file
+import bank
+
+def main():
+  # prompt for starting balance
+  startBal = float(input("What is your starting balance: "))
+
+  # create a BankAccount object
+  acc = bank.BankAccount(startBal)
+
+  # prompt and deposit user's paycheck
+  pay = float(input("How much were you paid: "))
+  acc.deposit(pay)
+
+  # prompt for amount to withdraw
+  amount = float(input("How much do you want to withdraw: "))
+  acc.withdraw(amount)
+
+  # print balance
+  print(acc)
+
+  # call the main function
+  main()
