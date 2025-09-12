@@ -1,0 +1,824 @@
+# Copy and paste this code into a python compiler to run it, such as
+# https://www.programiz.com/python-programming/online-compiler/
+
+# Large-scale ASCII art translated from art drawn by mouse in ms paint using https://www.asciiart.eu/image-to-ascii
+
+# Modules
+import time
+
+# Classes
+
+# A cell that contains organelles both plant and animal cells would have
+class Cell():
+    __organelles = ["Nucleus", "Ribosomes", "Endoplasmic Reticulum", "Golgi Complex",  "Peroxisomes", "Mitochondria"]
+    
+    __displays = {
+        "nucleus":
+            """
+                      .....                               
+                  .::........:..                           
+                .:.           .:.                          
+               :..   ....::.    :.                         
+              .:.   .:..==:.:.   :                         
+              ...   .:.*@%=.:.   :.                        
+              ...   .:..  .:..   ..                        
+               :.    .......     :.                        
+               .:.              :.                         
+                 :.           .:                           
+                   .-:......::.                            
+                           
+This is the nucleus. It is the control center of the cell and is generally located in the center of the cell.
+        """,
+        
+        "ribosomes":
+            """
+                    .........                            
+                 :...:..   ....::                          
+               :.::  ..:-:.     .:.                        
+             .:.. :.    ::        ..:                       
+             :..   :.             ..:                      
+             ..  .-..:.            .:.                     
+             :--...  ..:==-......:  .:                     
+                                 .....   
+                                         
+This is a ribosome. It is the site of protein synthesis and is located in the cytosol and the endoplasmic reticulum or nuclear envelope (at the nucleus).
+        """,
+        
+        "endoplasmic_reticulum":
+            """
+                              ::.....                             
+                        : ::.::---::.... ...                       
+                     :  :.: -::.      ...::..                      
+                     :..:::.::           .:.::.                    
+                    .:::. ::.:           .:.-..                    
+            @@  .:..@@:.. : .--..        .:.:.:                    
+           .::. .::.::..:..:....:-:........::.:.                   
+           .: ::..::.....-=:..:------=--...::..                    
+            .:...-==:.     .::-...       ==:                       
+              ..:-          ..--.  ..@@. ...                       
+                      :@@@.           ..:.                         
+                       ........::. ..:..                           
+                             .:-:::..                              
+                                                                   
+This is the endoplasmic reticulum. It consists of the rough ER and the smooth ER and is often located next to the nucleus.
+        """,
+        
+        "golgi_complex":
+            """
+                       ::.         ..:.                           
+                       :..:.      .:.. :                           
+                   .:.::.  .........   :                           
+                  ...  :::...        ..:.::.::                     
+             .:.   .:.. ..:.:::-:::::::.. ..:.                     
+             .@:     ..::.. ...         .:.. .:::.                 
+                   ..:-----=-:..:-----:..    ..@..                 
+                   ...  ....::::::..........:                      
+                   .:::..-..........:--..:-:.                      
+                      :.  -==------==-:. :                         
+                      ....::........-..                            
+               .:@:       .::...                                   
+                ...                 --:.                           
+                                    .@:.      
+                                    
+This is the golgi complex. It is the shipping center of the cell and is located near the endoplasmic reticulum.
+        """,
+        
+        "peroxisomes":
+            """
+                             .......  ..                           
+                          .:|.:.|..|..:|:..                        
+                       ..::.             ::..                      
+                      .__.      ...      .__:.              
+                     .:..    .:-...-:..   __.                      
+                     .:.    .-.     .-.   .:.                      
+                     __.    .-       -.  ..:.                      
+                     .:.    .-.     .-.  .__.                      
+                     .:.     ..:=.-:..   ...                       
+                      __..               =.                        
+                        :-::.         ..__.                        
+                           .--|...|.:|:.                         
+                              ..  ...                            
+                                                          
+This is a peroxisome. It is the recycling center of the cell and it is located throughout the cytoplasm.
+        """,
+        
+        "mitochondria":
+            """
+                                      ....                      
+                                   ............                    
+                                  ...:::::...::.                   
+                                  ....:. ..::.:.                   
+                                  ..   .:.::. ..                   
+                                 ...............                   
+                               ..:. :.  .-:.....                   
+                          ..:-...   ..:..:.  ...                   
+                    ..-:....  .:..::...: .:  .:.                   
+                    ..  :...:...::.    ...: ...                    
+                   ..   :.   .-==-. -.     ..:                     
+                    ...  .:..:..:.  .:.   ..:                      
+                     .:... ..:  ..--:.  ..:.                       
+                        ...--.........-:.                          
+                                     
+This is a mitochondria. It is the powerhouse of the cell and it is located throughout the cytoplasm.               
+        """
+    }
+    
+    
+    __frames = {
+        "nucleus": ["""
+        (-----(NUCLEUS)-----)
+        """,
+        """
+        (A----(NUCLEUS)A----)
+        """,
+        """
+        (NA---(NUCLEUS)NA---)
+        """,
+        """
+        (RNA--(NUCLEUS)RNA--)
+        """,
+        """
+        (rRNA-(NUCLEUS)-RNA-)
+        """,
+        """
+        (-rRNA(NUCLEUS)--RNA)
+        """,
+        """
+        (--rRN(NUCLEUS)---RN)
+        """],
+        
+        "ribosomes": ["""
+        RIB--[ mRNA
+        """,
+        """
+        RIB--[mRNA
+        """,
+        """
+        AA<--RIB--[mRNA
+        """,
+        """
+        AA-AA<--RIB--[mRNA
+        """,],
+        
+        "endoplasmic_reticulum": ["""
+        .~~.                ____
+        (ER)                -GC-
+        *~~*                ____
+        """,
+        """
+        .~~.                ____
+        (ER)O               -GC-
+        *~~*                ____
+        """,
+        """
+        .~~.O               ____
+        (ER)   O            -GC-
+        *~~*                ____
+        """,
+        """
+        .~~.   O            ____
+        (ER)      O         -GC-
+        *~~* O              ____
+        """,
+        """
+        .~~.       O        ____
+        (ER)            O   -GC-
+        *~~*     O          ____
+        """],
+        
+        "golgi_complex": ["""
+            ___  [       O
+            -GC--|   O
+            ___  [          O
+        """,
+        """
+            ___  [   O
+            -GC--|O
+            ___  [      O
+        """,
+        """
+            ___  [O
+            -GC--|O
+            ___  [    O
+        """,
+        """
+            ___  [O
+            -GC--|O
+            ___  [O
+        """,
+        """
+            ___  >O
+            -GC-->O
+            ___  >O
+        """,
+        """
+            ___  >-O-
+            -GC-->-O-
+            ___  >-O-
+        """,
+        """
+            ___  [X
+            -GC--|X
+            ___  [X
+        """,
+        """
+        X   <___  [
+        X   <-GC--|
+        X   <___  [
+        """],
+        
+        "peroxisomes": ["""
+        ||||
+        =PX=
+        ||||
+        """,
+        """
+        ||||
+        =PX=>
+        ||||
+        """,
+        """
+        ||||
+        =PX=>H2O2
+        ||||
+        """,
+        """
+        ||||
+        =PX= H2O2
+        ||||
+        """,
+        """
+        ||||  ^^^^
+        =PX= <H2O2>
+        ||||  \\/\\/
+        """,
+        """
+        ||||
+        =PX= H2O2
+        ||||
+        """,
+        """
+        ||||
+        =PX=[H2O|2
+        ||||
+        """,
+        """
+        ||||
+        =PX= H2O O
+        ||||
+        """],
+        
+        "mitochondria": ["""
+                    (~~~~~~)
+                    (  MC  )
+                    (~~~~~~)
+        """,
+        """
+                    (~~~~~~)
+        NUTRIENTS   (  MC  )
+                    (~~~~~~)
+        """,
+        """
+                    (~~~~~~)
+        NUTRIENTS]--(  MC  )
+                    (~~~~~~)
+        """,
+        """
+                    (~~~~~~)
+            NUTRI]--(  MC  )
+                    (~~~~~~)
+        """,
+        """
+                    (~~~~~~)
+                 ]--(  MC  )
+                    (~~~~~~)
+        """,
+        """
+                    (~~~~~~) [
+                    (  MC  )-|
+                    (~~~~~~) [
+        """,
+        """
+                    (~~~~~~) [
+                    (  MC  )-| ATP
+                    (~~~~~~) [
+        """,
+        """
+                    (~~~~~~) [ ATP
+                    (  MC  )-|     ATP
+                    (~~~~~~) [ATP
+        """]
+    }
+    
+    __functions = {
+        "nucleus": "The nucleus acts as the storage for the cell's genetic material. It has pores which regulate the entry and exit of materials from the cell. It contains a nucleolus where ribosomal RNA is synthesized; rRNA is combined with proteins to form subunits of ribosomes which exit via nuclear pores to assemble into ribosomes.\n",
+        
+        "ribosomes": "Ribosomes produce proteins for the cell. They read information from messenger RNA to correctly link together amino acids.\n",
+        
+        "endoplasmic_reticulum": "The endoplasmic reticulum is composed of the rough ER and the smooth ER. The RER contains ribosomes to synthesize proteins and the SER synthesizes lipids and detoxifies the cell. They both transport macromolecules to the Golgi Complex through the use of circular vesicles.\n",
+        
+        "golgi_complex": "The golgi complex first receives vesicles containing materials from the endoplasmic reticulum. It then modifies, sorts, packages these materials and adds molecular tags to them before sending them out to other areas or compartments in the cell via exocytosis.\n",
+        
+        "peroxisomes": "Peroxisomes catalyze reactions and create H2O2 as a byproduct. The H2O2 can be used to detoxify compounds, but it is quickly broken down into water and oxygen as it can damage the cell if any of it escapes. They additionally break down fatty acids and synthesize certain phospholipids.\n",
+        
+        "mitochondria": "Mitochondria act as the sites for cellular respiration. They contain enzymes that catalyze cellular respiration and produce ATP, energizing the cell.\n"
+    }
+    
+    __importance = {
+        "nucleus": "\nThe nucleus is essential to the cell because it assists in the creation of ribosomes and stores the cell's DNA, which directs all cellular activities.\n",
+        
+        "ribosomes": "\nProteins are responsible for virtually every function within the cell, so ribosomes being the sites of protein creation highlight their importance.\n",
+        
+        "endoplasmic_reticulum": "\nThe endoplasmic reticulum is important because it is a location for the synthesis of proteins and lipids. Its function of transporting lipids and proteins also adds onto its importance.\n",
+        
+        "golgi_complex": "\nThe golgi complex is significant due to its ability to add necessary modifications onto proteins and lipids received from the endoplasmic reticulum and making sure they reach their correct destinations.\n",
+        
+        "peroxisomes": "\nPeroxisomes help to protect the cell from harmful substances through detoxification. They also assist the cell's metabolism when breaking down fatty acids and synthesizing lipids.\n",
+        
+        "mitochondria": "\nMitochondria generate the energy the cell needs to perform important cellular processes and functions.\n"
+    }
+    
+    # Returns organelles
+    @classmethod
+    def get_organelles(cls):
+        return cls.__organelles
+        
+    # Returns displays
+    @classmethod
+    def get_displays(cls):
+        return cls.__displays
+        
+    # Display an organelle
+    def show_organelle(self, name):
+        print(self.__displays[name])
+        
+    # Play animation of a function
+    def animate(self, name):
+        for frame in self.__frames[name]:
+            print(frame)
+            
+            time.sleep(1)
+    
+    # Explain an organelle's function
+    def explain_function(self, name):
+        self.animate(name)
+        
+        print(self.__functions[name])
+    
+    # Explain an organelle's importance to the cell
+    def explain_importance(self, name):
+        print(self.__importance[name])
+    
+    
+    
+
+# A plant cell with plant-exclusive organelles
+class Plant(Cell):
+    __organelles = ["Chloroplasts", "Central Vacuole"]
+    
+    __displays = {
+        "chloroplasts":
+            """
+                      ..::::....:--::::....                        
+                    .::..#%%#-       #@@@   ::..                   
+                  .::-#@@@@@@@#. .=*%@@@@#*: ..:.                  
+                  .:..::#@@@@*.  :*%@@@@@@#:   ::                  
+                  .: -#@@@@@@@%-.=%%@@@@@@%.  .:.                  
+                  .: ..:%@@@@=. ..:*@@@@@-. ..:.                   
+                  .::. .......     ........=...                    
+                      ...-++=-:..... .=-.            
+                                                                   
+This is a chloroplast. It is the solar factory of the cell and is located throughout the cytoplasm.
+        """,
+        
+        "central_vacuole":
+            """
+                                 ......                           
+                               ...... .:.:.                        
+                              .:.        .:.                       
+                              .:         ..:                       
+                              .:          .:                       
+                              .:          .:                       
+                              .:          .:                       
+                              .:          ...                      
+                             ...           .:                      
+                   .::....:-=-.            .:                      
+                  ...                      .:                      
+                  .:.                     ..:                      
+                   .:..                   .:.                      
+                     .::....             ..:                       
+                          ...:-::....:--:..        
+                          
+This is the central vacuole. It is the storage unit of the cell and is located at the center of the cell.
+        """
+    }
+    
+    __frames = {
+        "chloroplasts": ["""
+        \\|/         
+        -O-        (C)
+        /|\\         
+        """,
+        """
+        \\|/         
+        -O- ----   (C)
+        /|\\         
+        """,
+        """
+        \\|/         
+        -O- -------(C)
+        /|\\         
+        """,
+        """
+        \\|/        * *
+        -O- -------(C)
+        /|\\        * *
+        """,
+        """
+        \\|/        * *
+        -O- -------(C)> C6H12O6 O
+        /|\\        * *
+        """],
+        
+        "central_vacuole": ["""
+        ________
+        | -    |
+        | -  * |
+        |  *   |____
+        |      O    |
+        |  O        |
+        |___________|
+        """,
+        """
+        ________
+        | -  * |
+        |   -  |
+        |    * |____
+        |  O        |
+        |      O    |
+        |___________|
+        """,
+        """
+        ________
+        | -    |
+        | -  * |
+        |  *   |____
+        |      O    |
+        |  O        |
+        |___________|
+        """,
+        """
+        ________
+        |   -  |
+        |-     |
+        |    * |____
+        | *        O|
+        |    O      |
+        |___________|
+        """
+        ]
+    }
+    
+    __functions = {
+        "chloroplasts": "Chloroplasts perform photosynthesis by absorbing light energy and converting it into glucose and oxygen.\n",
+        
+        "central_vacuole": "The vacuole of a plant is much larger than the vacuole of an animal. It acts as a storage for water, nutrients, and waste products. It also provides structural support for the cell.\n"
+    }
+    
+    __importance = {
+        "chloroplasts": "\nThe glucose and oxygen that chloroplasts produce are essential to the growth of the plant.\n",
+        
+        "central_vacuole": "\nThe central vacuole can store a large amount of water and nutrients and act as waste management for the cell.\n"
+    }
+    
+    # Displays the cell
+    def show_cell(self):
+    	print("""
+                       ..::::::::--::::::.:.            
+                      .-:....      .... .:.:            
+                      ::.  ::  .:. ..:.  :.:            
+                     ..::..:: ..:. :.:.  :...           
+                     ..:...    ...:....:::..:           
+                     ..:. .:-:: ..........:.:           
+                     ..:. :  .:   .....: .:.:           
+                     ::.. :...:  ...   :..:.:           
+                    ..:.   .... ...    :..:.:.          
+                    ..::.:. :-  .:.    :. .:.:          
+                    ..:::..-:: .:      :. .:.:          
+                    .:..    .-.        :  .:.:          
+                    .:. .. .:         .:...:.:          
+                    .:. -. .:..     ..:.::.:.:          
+                    .:...    ..:---:..    .:.:          
+                    .::.:::::::---------::...                                  
+    	""")
+    
+    # Returns exclusive organelles + general organelles
+    def get_organelles(self):
+        organelles = super().get_organelles()
+        organelles.extend(self.__organelles)
+        
+        return organelles
+    
+    # Display an organelle
+    def show_organelle(self, name): 
+        if name.replace("_", " ").title() in self.__organelles:
+            print(self.__displays[name])
+        else:
+            print(super().get_displays()[name])
+        
+    # Play animation of a function
+    def animate(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+             for frame in self.__frames[name]:
+                   print(frame)
+            
+                   time.sleep(1)
+        else:
+	        super().animate(name)
+    
+    # Explain an organelle's function
+    def explain_function(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+            self.animate(name)
+        
+            print(self.__functions[name])
+        else:
+            super().explain_function(name)
+    
+    # Explain an organelle's importance to the cell
+    def explain_importance(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+            print(self.__importance[name])
+        else:
+            super().explain_importance(name)
+    
+    # String form
+    def __str__(self):
+        return "This is a plant cell. Unlike animal cells, it has chloroplasts."
+    
+# An animal cell with animal-exclusive organelles
+class Animal(Cell):
+    __organelles = ["Lysosomes", "Vacuoles"]
+    
+    __displays = {
+        "lysosomes":
+            """
+                             ........                              
+                         .::...:-:....::                           
+                        :..    ...    :-:.                         
+                       -+.    .+@#:      .:                        
+                       :..    ..::.      .:                        
+                       :.  ...     .:..  .#-                       
+                       :. .@@+    .#@*.  .:                        
+                       .:. ...     ...  .:.                        
+                        .:.            -.                          
+                           .:==-----=:..                           
+            
+This is a lysosome. It is the recycling system of the cell and is located throughout the cytoplasm.
+        """,
+        
+        "vacuoles":
+            """
+                                 ......                         
+                             .:... ..:..:.                         
+                        ....:..          .:                        
+                      :....              .:                        
+                     ...                 .:                        
+                     .:.                 :.                        
+                      .:..             .-.                         
+                         ..:===-:.   -:.                           
+                                                                   
+This is a vacuole. It is the storage unit of the cell and is located throughout the cytoplasm.
+        """
+    }
+    
+    __frames = {
+        "lysosomes": ["""
+        (+)
+        +L+
+        (+)
+        """,
+        """
+        (+)
+        +L+   WASTE
+        (+)
+        """,
+        """
+        (+)
+        +L+-[WASTE 
+        (+)
+        """,
+        """
+        (+)
+        +L+-[WA ST
+        (+)
+        """,
+        """
+        (+)
+        +L+-[A T
+        (+)
+        """,
+        """
+        (+)
+        +L+-[
+        (+)
+        """,
+        """
+          (+)
+        ]-+L+
+          (+)
+        """,
+        """
+                    (+)
+        COMPONENTS]-+L+
+                    (+)
+        """],
+        
+        "vacuoles": ["""
+        ~~~~~~~~
+        ( *    )
+        (   *  )
+        ~~~~~~~~
+        """,
+        """
+        ~~~~~~~~
+        (    * )
+        ( *    )
+        ~~~~~~~~
+        """,
+        """
+        ~~~~~~~~
+        ( *    )
+        (   *  )
+        ~~~~~~~~
+        """,
+        """
+        ~~~~~~~~
+        (  *   )
+        ( *    )
+        ~~~~~~~~
+        """]
+    }
+    
+    __functions = {
+        "lysosomes": "Lysosomes perform autophagy; they break down non-functioning organic materials and organelles to recycle their components.\n",
+        
+        "vacuoles": "Vacuoles store various substances such as nutrients and water.\n"
+    }
+    
+    __importance = {
+        "lysosomes": "\nLysosomes prevent waste from piling up within the cell and instead turns it into recyclable material, helping the cell renew itself.\n",
+        
+        "vacuoles": "\nVacuoles are important containers for cellular materials and assist in endocytosis/exocytosis.\n"
+    }
+    
+    # Displays the cell
+    def show_cell(self):
+    	print("""
+                            .......::...                
+                       .::.:::::.::.  .....:.           
+                    :.....:..::::. ...:..  .:.          
+                   ...  .:.::::---:: ...:.. ..          
+                   :.   :..:::::....:...::....          
+                   :..  :  .::-:.::: :..:.....          
+                   .:.  :.  .:..::...:.: .:..           
+                    .:. ::.....:----:-:..:.             
+                     :. ::.:.....--:..: .:              
+                    .:.... .:=:--. ::::..:.             
+                   .:. ::-.:=:.-=:  =-=. ..             
+                   :.  ---: .===--. :-:  ..             
+                   :.. ::-:.-==-:.:..:. ...             
+                   .:.. ..:----::.:-....:.              
+                     ..-..........:--..                          
+    	""")
+    	
+    # Returns exclusive organelles + general organelles
+    def get_organelles(self):
+        organelles = super().get_organelles()
+        organelles.extend(self.__organelles)
+        
+        return organelles
+    
+    # Display an organelle
+    def show_organelle(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+            print(self.__displays[name])
+        else:
+            print(super().get_displays()[name])
+        
+    # Play animation of a function
+    def animate(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+             for frame in self.__frames[name]:
+                   print(frame)
+            
+                   time.sleep(1)
+        else:
+	        super().animate(name)
+    
+    # Explain an organelle's function
+    def explain_function(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+            self.animate(name)
+        
+            print(self.__functions[name])
+        else:
+            super().explain_function(name)
+    
+    # Explain an organelle's importance to the cell
+    def explain_importance(self, name):
+        if name.replace("_", " ").title() in self.__organelles:
+            print(self.__importance[name])
+        else:
+            super().explain_importance(name)
+    
+    # String form
+    def __str__(self):
+        return "This is an animal cell. Unlike plant cells, it has lysosomes."
+    
+
+# Main program
+
+# Prompt user for an animal or plant cell
+cell = None
+
+print("SPELLING AND SPACING MATTERS, CAPITALIZATION DOES NOT")
+
+choice = input("""What kind of cell do you want? (Enter the name of the option)
+1. Animal
+2. Plant
+""").lower()
+
+if choice == "animal":
+    cell = Animal()
+elif choice == "plant":
+    cell = Plant()
+else:
+    raise Exception("Invalid input")
+
+# Get existing organelles
+organelles = []
+
+for organelle in cell.get_organelles():
+    organelles.append(organelle)
+    
+# Options to learn about organelles
+options = ["Its function", "Importance to the cell", "Back"]
+
+while True:
+    # Display the cell and its organelles
+    cell.show_cell()
+    
+    print(cell)
+    print("This cell houses the following organelles:")
+    
+    for i in range(0, len(organelles)):
+        print(f"{i + 1}.", organelles[i])
+    
+    # Prompt user to choose an organelle to learn about
+    choice = input("\nEnter the name of the option you would like to learn about\n").title()
+    
+    while not choice in organelles:
+        print()
+        
+        for i in range(0, len(organelles)):
+            print(f"{i + 1}.", organelles[i])
+        
+        choice = input("\nInvalid input. Enter the name of the option you would like to learn about\n").title()
+        
+    # Modify choice into variable format (snake_case)
+    name = choice.replace(" ", "_").lower()
+    
+    # Display the specified organelle
+    cell.show_organelle(name)
+    
+    #Prompt user to investigate the organelle
+    while True:
+        for i in range(0, len(options)):
+            print(f"{i + 1}.", options[i])
+        
+        choice = input("\nWhat would you like to know about this organelle? Enter the name of your option.\n").title()
+        
+        choice = choice[0].upper() + choice[1:].lower()
+        
+        while not choice in options:
+            print()
+            
+            for i in range(0, len(options)):
+                print(f"{i + 1}.", options[i])
+            
+            choice = input("\nInvalid input. Enter the name of your option.\n")
+            
+            choice = choice[0].upper() + choice[1:].lower()
+        
+        if choice == options[0]:
+            # Play an animation of the organelle's function and explain it
+            cell.explain_function(name)
+        elif choice == options[1]:
+            # Explain why the organelle is essential to the cell's survival
+            cell.explain_importance(name)
+        else:
+            # Go back to other organelle options
+            break
+
+
