@@ -1,0 +1,45 @@
+# in a file named stud.py
+class Student:
+  def __init__(self, name, age, grade):
+    self.__name = name
+    self.__age = age
+    self.__grade = grade
+
+  def getGrade(self):
+    return self.__grade
+
+# in a file named clas.py
+class Course:
+  def __init__(self, name, maxStudents):
+    self.__name = name
+    self.__maxStudents = maxStudents
+    self.__students = []
+
+  def addStudent(self, student):
+    if len(self.__students) < self.__maxStudents:
+      self.__students.append(student)
+      return True
+
+    return False
+
+  def getAverageGrade(self):
+  value = 0
+
+  for student in self.__students:
+    value += student.getGrade()
+
+   return value/len(self.__students)
+
+# in another file
+import stud, clas
+
+s1 = stud.Student("Jasdlas", 100, 4)
+s2 = stud.Student("Kasdvoxcvwer", 1, 99)
+s3 = stud.Student("Tw", 18, 24)
+
+course = clas.Course("Scense", 2)
+course.addStudent(s1)
+course.addStudent(s3)
+
+print(course.addStudent(s2))
+print(course.getAverageGrade())
