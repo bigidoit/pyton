@@ -1,0 +1,50 @@
+# in a file named pets.py
+class Pet:
+  def __init__(self, name, age):
+    self.__name = name
+    self.__age = age
+
+  def show(self):
+    print(f"{self.__name} is {self.__age} years old")
+
+  def speak(self):
+    print("No")
+
+  def getName(self):
+    return self.__name
+
+  def getAge(self):
+    return self.__age
+
+# in a file named cats.py
+import pets
+
+class Cat(pets.Pet):
+  def __init__(self, name, age, color):
+    super().__init__(name, age)
+    self.__color = color
+
+  def speak(self):
+    print("meow")
+
+  def show(self):
+    print(f"{self.getName()} is {self.getAge()} and {self.__color}")
+
+# in a file named dogs.py
+import pets
+
+class Dog(pets.Pet):
+def speak(self):
+  print("bark")
+
+# in another file
+import pets, cats, dogs
+
+p = pets.Pet("pet", 19)
+p.show()
+
+c = cats.Cat("cate", 21, "red")
+c.show()
+
+d = dogs.Dog("dig", 999)
+d.speak()
