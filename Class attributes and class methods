@@ -1,0 +1,32 @@
+# in a file named people.py
+class Person:
+  __numberOfPeople = 0;
+
+  def __init__(self, name):
+    self.__name = name
+    Person.addPerson()
+
+  def getName(self):
+    return self.__name
+
+  @classmethod
+  def addPerson(cls):
+    cls.__numberOfPeople += 1
+
+  @classmethod
+  def howManyPeople(cls):
+    return cls.__numberOfPeople
+
+# in another file
+import people
+
+def main():
+  p1 = people.Person("Tim")
+  p2 = people.Person("Ryan")
+
+  print(people.Person.howManyPeople())
+  print(p1.getName())
+  print(p2.getName())
+  print(people.Person.howManyPeople())
+
+main()
