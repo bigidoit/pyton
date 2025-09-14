@@ -1,0 +1,189 @@
+# in a file named phone.py
+class Cellphone:
+  def __init__(self, manufact, model, price):
+    self.__manufact = manufact
+    self.__model = model
+    self.__price = price
+
+  def get_manufact(self):
+    return self.__manufact
+
+  def set_manufact(self, manufact):
+    self.__manufact = manufact
+
+  def get_model(self):
+    return self.__model
+
+  def set_model(self, model):
+    self.__model = model
+
+  def get_price(self):
+    return self.__price
+
+  def set_price(self, price):
+    self.__price = price
+
+  def __str__(self):
+    return f"{self.get_price():.2f}$ {self.get_model()} phone by {self.get_manufact()}"
+
+# in a file named contacts.py
+class Contact:
+  def __init__(self, name, phone, email):
+    self.__name = name
+    self.__phone = phone
+    self.__email = email
+
+  def set_name(self, name):
+    self.__name = name
+
+  def set_phone(self, phone):
+    self.__phone = phone
+
+  def set_email(self, email):
+    self.__email = email
+
+  def get_name(self):
+    return self.__name
+
+  def get_phone(self):
+    return self.__phone
+
+  def get_email(self):
+    return self.__email
+
+  def __str__(self):
+    return "Name: " + self.__name + \"\nPhone: " + str(self.__phone) + \"\nEmail: " + self.__email
+
+# in another file
+import phone, contacts
+
+# Global constants for menu choices
+LOOK_UP = 1
+ADD = 2
+CHANGE = 3
+DELETE = 4
+QUIT = 5
+
+# loads available contacts
+def load_contacts():
+  # create dictionary with default contacts
+  contact_dct = {"sir coll": contacts.Contact("sir coll", phone.Cellphone("aple", "pro", 2), "123#"), "bart": contacts.Contact("bart", phone.Cellphone("pear", "bad", 2000), "bert#235"), "ben down": contacts.Contact("ben down", phone.Cellphone("sam", "t1000", 68), "1@56")}
+
+  # return it
+  return contact_dct
+
+# The get_menu_choice function displays the menu
+# and gets a validated choice from the user.
+def get_menu_choice():
+  print()
+  print('Menu')
+  print('---------------------------')
+  print('1. Look up a contact')
+  print('2. Add a new contact')
+  print('3. Change an existing contact')
+  print('4. Delete a contact')
+  print('5. Quit the program')
+  print()
+
+  # Get the user's choice.
+  choice = int(input('Enter your choice: '))
+  
+  # Validate the choice.
+  while choice < LOOK_UP or choice > QUIT:
+    choice = int(input('Enter a valid choice: '))
+  
+  # return the user's choice.
+  return choice
+
+# The look_up function looks up an item in the
+# specified dictionary.
+def look_up(mycontacts):
+  # Get a name to look up.
+  name = input('Enter a name: ')
+
+  # Look it up in the dictionary.
+  print(mycontacts.get(name, 'That name is not found.'))
+
+# The add function adds a new entry into the
+# specified dictionary.
+def add(mycontacts):
+  # Get the contact info.
+  name = input('Name: ')
+  phone = input('Phone: ')
+  email = input('Email: ')
+
+  # Create a Contact object named entry.
+  entry = contacts.Contact(name, phone, email)
+
+  # If the name does not exist in the dictionary,
+  # add it as a key with the entry object as the
+  # associated value.
+  if name not in mycontacts:
+    mycontacts[name] = entry
+    print('The entry has been added.')
+  else:
+    print('That name already exists.')
+
+# The change function changes an existing
+# entry in the specified dictionary.
+def change(mycontacts):
+  # Get a name to look up.
+  name = input('Enter a name: ')
+
+  if name in mycontacts:
+    # Get a new phone number.
+    phone = input('Enter the new phone number: ')
+
+    # Get a new email address.
+    email = input('Enter the new email address: ')
+
+    # Create a contact object named entry.
+    entry = contacts.Contact(name, phone, email)
+
+    # Update the entry.
+    mycontacts[name] = entry
+
+    print('Information updated.')
+  else:
+    print('That name is not found.')
+
+# The delete function deletes an entry from the
+# specified dictionary.
+def delete(mycontacts):
+  # Get a name to look up.
+  name = input('Enter a name: ')
+
+  # If the name is found, delete the entry.
+  if name in mycontacts:
+    del mycontacts[name]
+
+    print('Entry deleted.')
+  else:
+    print('That name is not found.')
+
+# main function
+def main():
+  # Load the existing contact dictionary and
+  # assign it to mycontacts.
+  mycontacts = load_contacts()
+
+  # Initialize a variable for the user's choice.
+  choice = 0
+
+  # Process menu selections until the user
+  # wants to quit the program.
+  while choice != QUIT:
+    # Get the user's menu choice.
+    choice = get_menu_choice()
+  
+    # Process the choice.
+    if choice == LOOK_UP:
+      look_up(mycontacts)
+    elif choice == ADD:
+      add(mycontacts)
+    elif choice == CHANGE:
+      change(mycontacts)
+    elif choice == DELETE:
+      delete(mycontacts)
+
+main()
