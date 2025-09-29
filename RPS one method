@@ -109,7 +109,7 @@ class Game():
         
 
 # main file
-#import playerClass, gameClass
+import playerClass, gameClass
 
 name = input("What is your name: ")
 
