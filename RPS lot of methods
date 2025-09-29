@@ -1,0 +1,142 @@
+# playerClass.py
+import random
+
+class Player():
+    __name = None
+    __score = 0
+    __choice = None
+    
+    __choices = ("Rock", "Paper", "Scissors")
+    
+    # initialize with given name
+    def __init__(self, name):
+        self.__name = name
+    
+    # generates random choice
+    def set_comp_choice(self):
+        rng = random.randint(0, 2)
+        
+        self.__choice = self.__choices[rng]
+    
+    # prompts for user choice
+    def set_human_choice(self):
+        self.__choice = input("Enter your choice, rock/paper/scissors: ").title()
+        
+        while not self.__choice in self.__choices:
+            self.__choice = input("Invalid input. Enter your choice, rock/paper/scissors: ").title()
+            
+    # returns choice
+    def get_choice(self):
+        return self.__choice
+        
+    # sets score to num
+    def set_score(self, num):
+        self.__score = num
+        
+    # returns score
+    def get_score(self):
+        return self.__score
+        
+    # string form is the name
+    def __str__(self):
+        return self.__name
+
+# gameClass.py
+import playerClass
+
+class Game():
+    __Human = None
+    __Computer = None
+    __playing = True
+    
+    # what beats what
+    __epicDex = {
+        "Rock": "Scissors",
+        "Paper": "Rock",
+        "Scissors": "Paper"
+    }
+    
+    # initialize with players
+    def __init__(self, Human, CPU):
+        self.__Human = Human
+        self.__Computer = CPU
+    
+    # play game until user prompts to stop
+    def game_on(self):
+        while self.__playing:
+            # set and get choices from human and cpu
+            hC, cC = self.get_choices()
+            
+            winner = self.winner(hC, cC)
+            
+            if winner != "Nobody":
+                self.add_score(winner)
+            
+            self.display(hC, cC)
+            self.display_winner(winner)
+            
+            self.play_again()
+            
+    # get choices from human and cpu
+    def get_choices(self):
+        self.__Human.set_human_choice()
+        self.__Computer.set_comp_choice()
+        
+        return self.__Human.get_choice(), self.__Computer.get_choice()
+        
+    # determine the winner
+    def winner(self, hC, cC):
+        beats = self.__epicDex[hC]
+        
+        if cC == beats:
+            # human win
+            return self.__Human
+        elif hC == cC:
+            # tie
+            return "Nobody"
+        else:
+            # cpu win
+            return self.__Computer
+            
+    # add points to a player
+    def add_score(self, plr, amount = 1):
+        plr.set_score(plr.get_score() + amount)
+        
+    # display choices
+    def display(self, hC, cC):
+        print(f"{self.__Human} chose {hC}")
+        print(f"{self.__Computer} chose {cC}")
+        
+    # display winner
+    def display_winner(self, winner):
+        print(f"Winner is {winner}")
+        print("Score:")
+        print(f"{self.__Human}: {self.__Human.get_score()}")
+        print(f"{self.__Computer}:  {self.__Computer.get_score()}")
+        
+    # prompt player to play again
+    def play_again(self):
+        answer = input("Play again? yes/no: ").lower()
+        
+        while answer != "yes" and answer != "no":
+            answer = input("Invalid input. Play again? yes/no: ").lower()
+            
+        if answer == "yes":
+            pass
+        else:
+            self.__playing = False
+
+# main file
+import playerClass, gameClass
+
+name = input("What is your name: ")
+
+a = playerClass.Player(name)
+b = playerClass.Player("CPU")
+
+game = gameClass.Game(a, b)
+
+game.game_on()
+
+
+
