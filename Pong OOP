@@ -1,0 +1,245 @@
+# Main.py
+import Game, Paddle, Ball
+
+Game.Game().play()
+
+
+# Game.py
+import pygame, sys, time, Ball, Paddle
+
+class Game(object):
+    WHITE = (255, 255, 255)
+    BLACK = (0, 0, 0)
+    
+    PADDLE_WIDTH = 20
+    PADDLE_HEIGHT = 75
+    PADDLE_SPEED = 3
+    
+    BALL_RADIUS = 10
+    BALL_SPEED = 1.5
+    
+    MOVEMENT_ONE = {
+        pygame.K_a: -1,
+        pygame.K_d: 1,
+        pygame.K_w: -1,
+        pygame.K_s: 1
+    }
+    
+    MOVEMENT_TWO = {
+        pygame.K_LEFT: -1,
+        pygame.K_RIGHT: 1,
+        pygame.K_UP: -1,
+        pygame.K_DOWN: 1
+    }
+    
+    def __init__(self):
+        pygame.init()
+        
+        info = pygame.display.Info()
+        SCREEN_W, SCREEN_H = info.current_w, info.current_h
+        SCREEN_LIMITS = (0 - 37.5 + Game.PADDLE_HEIGHT/2, SCREEN_H - 37.5 - Game.PADDLE_HEIGHT/2)
+        
+        self.__screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.FULLSCREEN)
+        
+        self.__ball = Ball.Ball(SCREEN_W/2 - Game.BALL_RADIUS, SCREEN_H/2 - Game.BALL_RADIUS, Game.BALL_SPEED, Game.BALL_SPEED, Game.BALL_RADIUS, Game.WHITE)
+        self.__p_one = Paddle.Paddle("P1", 0 + Game.PADDLE_WIDTH/2, SCREEN_H/2 - Game.PADDLE_HEIGHT/2, 0, SCREEN_LIMITS, Game.PADDLE_WIDTH, Game.PADDLE_HEIGHT, Game.WHITE)
+        self.__p_two = Paddle.Paddle("P2", SCREEN_W - 40 - Game.PADDLE_WIDTH/2, SCREEN_H/2 - Game.PADDLE_HEIGHT/2, 0, SCREEN_LIMITS, Game.PADDLE_WIDTH, Game.PADDLE_HEIGHT, Game.WHITE)
+        
+    def play(self):
+        clock = pygame.time.Clock()
+        
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key in Game.MOVEMENT_ONE:
+                        direction = Game.MOVEMENT_ONE[event.key]
+                        
+                        self.__p_one.set_speed(direction*Game.PADDLE_SPEED)
+                    elif event.key in Game.MOVEMENT_TWO:
+                        direction = Game.MOVEMENT_TWO[event.key]
+                        
+                        self.__p_two.set_speed(direction*Game.PADDLE_SPEED)
+                elif event.type == pygame.KEYUP:
+                    if event.key in Game.MOVEMENT_ONE:
+                        self.__p_one.set_speed(0)
+                    elif event.key in Game.MOVEMENT_TWO:
+                        self.__p_two.set_speed(0)
+                        
+            clock.tick(60)
+            
+            self.__p_one.move()
+            self.__p_two.move()
+            
+            self.__ball.move()
+            
+            self.draw()
+            
+    def draw(self):
+        font = pygame.font.SysFont("verdana", 30)
+        
+        info = pygame.display.Info()
+        SCREEN_W, SCREEN_H = info.current_w, info.current_h
+        
+        self.__screen.fill(Game.BLACK)
+        
+        # middle line
+        for i in range(0, SCREEN_H, 20):
+            pygame.draw.line(self.__screen, Game.WHITE, (SCREEN_W/2, i), (SCREEN_W/2, i + 10), 2)
+        
+        ball = self.__ball.draw(self.__screen)
+        l_paddle = self.__p_one.draw(self.__screen)
+        r_paddle = self.__p_two.draw(self.__screen)
+        
+        posX = self.__ball.get_pos_x()
+        posY = self.__ball.get_pos_y()
+        speedX = self.__ball.get_speed_x()
+        speedY = self.__ball.get_speed_y()
+        
+        if posY <= 0 + 10 - Game.BALL_RADIUS or posY >= SCREEN_H - 35 + Game.BALL_RADIUS:
+            self.__ball.set_speed_y(-speedY)
+        
+        if ball.colliderect(l_paddle) or ball.colliderect(r_paddle):
+            self.__ball.set_speed_x(-min(speedX*1.1, 4))
+        
+        if posX > SCREEN_W + Game.BALL_RADIUS:
+            self.__p_one.set_score(self.__p_one.get_score() + 1)
+            
+            self.__ball.reset_pos()
+            self.__ball.set_speed_x(Game.BALL_SPEED * abs(speedX)/speedX)
+        elif posX < 0 - 40 - Game.BALL_RADIUS:
+            self.__p_two.set_score(self.__p_two.get_score() + 1)
+            
+            self.__ball.reset_pos()
+            self.__ball.set_speed_x(Game.BALL_SPEED * abs(speedX)/speedX)
+        
+        text_one = font.render(str(self.__p_one.get_score()), True, Game.WHITE)
+        text_two = font.render(str(self.__p_two.get_score()), True, Game.WHITE)
+        
+        self.__screen.blit(text_one, (125, 50))
+        self.__screen.blit(text_two, (475, 50))
+        
+        winner = self.check_winner()
+        
+        if winner:
+            self.win_screen(winner)
+        else:
+            pygame.display.flip()
+        
+    def check_winner(self):
+        winner = None
+        
+        if self.__p_one.get_score() >= 11:
+            winner = self.__p_one
+        elif self.__p_two.get_score() >= 11:
+            winner = self.__p_two
+        
+        return winner
+    
+    def win_screen(self, winner):
+        info = pygame.display.Info()
+        SCREEN_W, SCREEN_H = info.current_w, info.current_h
+        
+        font = pygame.font.SysFont("verdana", 30)
+        
+        self.__screen.fill(Game.BLACK)
+        
+        text = font.render(winner.get_name() + " WIN", True, Game.WHITE)
+            
+        self.__screen.blit(text, (SCREEN_W/2 - 50, SCREEN_H/2 - 40))
+        
+        pygame.display.flip()
+        
+        time.sleep(5)
+        
+        pygame.quit()
+        sys.exit()
+        
+        pass
+
+
+# Paddle.py
+import pygame, sys, time
+
+class Paddle(object):
+    def __init__(self, name, x, y, vy, screen_limits, width, height, color):
+        self.__name = name
+        self.__x = x
+        self.__y = y
+        self.__vy = vy
+        self.__width = width
+        self.__height = height
+        self.__color = color
+        self.__screen_limits = screen_limits
+        self.__score = 0
+        
+    def move(self):
+        self.__y = max(min(self.__y + self.__vy, self.__screen_limits[1]), self.__screen_limits[0])
+        
+    def set_speed(self, speed):
+        self.__vy = speed
+        
+    def set_score(self, score):
+        self.__score = score
+        
+    def draw(self, screen):
+        return pygame.draw.rect(screen, self.__color, self.rect())
+        
+    def rect(self):
+        return pygame.Rect(self.__x, self.__y, self.__width, self.__height)
+        
+    def get_score(self):
+        return self.__score
+        
+    def get_name(self):
+        return self.__name
+
+
+
+# Ball.py
+import pygame, sys, time
+
+class Ball(object):
+    def __init__(self, x, y, vx, vy, radius, color):
+        self.__x = x
+        self.__y = y
+        self.__X_DEFAULT = x
+        self.__Y_DEFAULT = y
+        self.__vx = vx
+        self.__vy = vy
+        self.__radius = radius
+        self.__color = color
+        
+    def move(self):
+        self.__x += self.__vx
+        self.__y += self.__vy
+        
+    def reset_pos(self):
+        self.__x = self.__X_DEFAULT
+        self.__y = self.__Y_DEFAULT
+        
+    def set_speed_x(self, speed):
+        self.__vx = speed
+        
+    def set_speed_y(self, speed):
+        self.__vy = speed
+        
+    def draw(self, screen):
+        return pygame.draw.rect(screen, self.__color, self.rect())
+        
+    def rect(self):
+        return pygame.Rect(self.__x, self.__y, self.__radius*2, self.__radius*2)
+        
+    def get_pos_x(self):
+        return self.__x
+        
+    def get_pos_y(self):
+        return self.__y
+        
+    def get_speed_x(self):
+        return self.__vx
+        
+    def get_speed_y(self):
+        return self.__vy
