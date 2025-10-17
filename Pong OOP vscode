@@ -36,10 +36,10 @@ class Game(object):
         pygame.init()
         
         info = pygame.display.Info()
-        SCREEN_W, SCREEN_H = info.current_w, info.current_h
+        SCREEN_W, SCREEN_H = info.current_w/2, info.current_h/2
         SCREEN_LIMITS = (0 - 37.5 + Game.PADDLE_HEIGHT/2, SCREEN_H - 37.5 - Game.PADDLE_HEIGHT/2)
         
-        self.__screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.FULLSCREEN)
+        self.__screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
         
         self.__ball = Ball.Ball(SCREEN_W/2 - Game.BALL_RADIUS, SCREEN_H/2 - Game.BALL_RADIUS, Game.BALL_SPEED, Game.BALL_SPEED, Game.BALL_RADIUS, Game.WHITE)
         self.__p_one = Paddle.Paddle("P1", 0 + Game.PADDLE_WIDTH/2, SCREEN_H/2 - Game.PADDLE_HEIGHT/2, 0, SCREEN_LIMITS, Game.PADDLE_WIDTH, Game.PADDLE_HEIGHT, Game.WHITE)
@@ -118,8 +118,8 @@ class Game(object):
         text_one = font.render(str(self.__p_one.get_score()), True, Game.WHITE)
         text_two = font.render(str(self.__p_two.get_score()), True, Game.WHITE)
         
-        self.__screen.blit(text_one, (125, 50))
-        self.__screen.blit(text_two, (475, 50))
+        self.__screen.blit(text_one, (SCREEN_W/4, SCREEN_H/12))
+        self.__screen.blit(text_two, (SCREEN_W - SCREEN_W/4, SCREEN_H/12))
         
         winner = self.check_winner()
         
