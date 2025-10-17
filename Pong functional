@@ -1,0 +1,131 @@
+import pygame, sys, time, math
+
+pygame.init()
+
+screen = pygame.display.set_mode((800, 600))
+
+clock = pygame.time.Clock()
+
+font = pygame.font.SysFont("verdana", 30)
+
+base_speed = 5
+ball_speed_x = 1.5
+ball_speed_y = 4
+
+p_one_score = 0
+p_two_score = 0
+
+p_one_y = 230
+p_two_y = 230
+
+p_one_speed = 0
+p_two_speed = 0
+
+ball_x = 380
+ball_y = 280
+
+movement_one = {
+    pygame.K_a: -1,
+    pygame.K_d: 1,
+    pygame.K_w: -1,
+    pygame.K_s: 1
+}
+
+movement_two = {
+    pygame.K_LEFT: -1,
+    pygame.K_RIGHT: 1,
+    pygame.K_UP: -1,
+    pygame.K_DOWN: 1
+}
+
+running = True
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key in movement_one:
+                direction = movement_one[event.key]
+                
+                p_one_speed = direction*base_speed
+            elif event.key in movement_two:
+                direction = movement_two[event.key]
+                
+                p_two_speed = direction*base_speed
+        elif event.type == pygame.KEYUP:
+            if event.key in movement_one:
+                p_one_speed = 0
+            elif event.key in movement_two:
+                p_two_speed = 0
+    
+    clock.tick(60)
+    
+    screen.fill((0, 0, 0))
+    
+    if p_one_score >= 11:
+        running = False
+        
+        text = font.render("P1 WIN", True, (255, 255, 255))
+            
+        screen.blit(text, (350, 250))
+        
+        pygame.display.flip()
+        
+        break
+    elif p_two_score >= 11:
+        running = False
+        
+        text = font.render("P2 WIN", True, (255, 255, 255))
+            
+        screen.blit(text, (350, 250))
+        
+        pygame.display.flip()
+        
+        break
+    
+    for i in range(0, 600, 20):
+        pygame.draw.line(screen, (255, 255, 255), (400, i), (400, i + 10), 2)
+    
+    p_one = pygame.draw.rect(screen, (255, 255, 255), (80, p_one_y, 20, 100))
+    p_two = pygame.draw.rect(screen, (255, 255, 255), (680, p_two_y, 20, 100))
+    
+    ball = pygame.draw.rect(screen, (255, 255, 255), (ball_x, ball_y, 20, 20))
+    
+    p_one_y = max(min(p_one_y + p_one_speed, 480), 10)
+    p_two_y = max(min(p_two_y + p_two_speed, 480), 10)
+    
+    if ball_y <= 0:
+        ball_speed_y *= -1
+    elif ball_y >= 580:
+        ball_speed_y *= -1
+        
+    if ball.colliderect(p_one) or ball.colliderect(p_two):
+        ball_speed_x = -min(ball_speed_x*1.1, 4)
+    
+    ball_x += ball_speed_x
+    ball_y += ball_speed_y
+    
+    if ball_x > 800:
+        p_one_score += 1
+        
+        ball_x = 380
+        ball_speed_x = 1.5
+    elif ball_x < 0:
+        p_two_score += 1
+        
+        ball_x = 380
+        ball_speed_x = -1.5
+    
+    text_one = font.render(str(p_one_score), True, (255, 255, 255))
+    text_two = font.render(str(p_two_score), True, (255, 255, 255))
+    
+    screen.blit(text_one, (200, 50))
+    screen.blit(text_two, (550, 50))
+   
+    pygame.display.flip()
+
+time.sleep(5)
+
+pygame.quit()
+sys.exit()
