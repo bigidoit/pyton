@@ -1,0 +1,226 @@
+# pygame demo 8 - SimpleText, SimpleButton, and Ball
+
+
+# 1 - Import packages
+import pygame
+from pygame.locals import *
+import sys
+import random
+from Ball import * # bring in the Ball class code
+from SimpleText import *
+from SimpleButton import *
+
+
+# 2 - Define constants
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+WINDOW_WIDTH = 640
+WINDOW_HEIGHT = 480
+FRAMES_PER_SECOND = 30
+
+
+# 3 - Initialize the world
+pygame.init()
+
+
+window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+clock = pygame.time.Clock()
+
+
+# 4 - Load assets: image(s), sound(s), etc.
+
+
+# 5 - Initialize variables
+oBall = Ball(window, WINDOW_WIDTH, WINDOW_HEIGHT)
+oFrameCountLabel = SimpleText(window, (60, 20), 'Program has run through this many loops: ', WHITE)
+oFrameCountDisplay = SimpleText(window, (500, 20), '', WHITE)
+oRestartButton = SimpleButton(window, (280, 60), 'images/buttonUp.png', 'images/buttonDown.png')
+frameCounter = 0
+
+
+# 6 - Loop forever
+while True:
+    # 7 - Check for and handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if oRestartButton.handleEvent(event):
+            frameCounter = 0 # clicked button, reset counter
+
+
+    # 8 - Do any "per frame" actions
+    oBall.update() # tell the ball to update itself
+    frameCounter = frameCounter + 1 # increment each frame
+    oFrameCountDisplay.setValue(str(frameCounter))
+
+
+    # 9 - Clear the window before drawing it again
+    window.fill(BLACK)
+
+
+    # 10 - Draw the window elements
+    oBall.draw() # tell the ball to draw itself
+    oFrameCountLabel.draw()
+    oFrameCountDisplay.draw()
+    oRestartButton.draw()
+
+
+    # 11 - Update the window
+    pygame.display.update()
+
+
+    # 12 - Slow things down a bit
+    clock.tick(FRAMES_PER_SECOND)
+
+
+
+
+
+
+import pygame
+from pygame.locals import *
+import random
+
+
+# Ball class
+class Ball():
+    def __init__(self, window, windowWidth, windowHeight):
+        self.window = window # remember the window, so we can draw later
+        self.windowWidth = windowWidth
+        self.windowHeight = windowHeight
+        self.image = pygame.image.load('images\\ball.png')
+
+
+        # A rect is made up of [x, y, width, height]
+        ballRect = self.image.get_rect()
+        self.width = ballRect.width
+        self.height = ballRect.height
+        self.maxWidth = windowWidth - self.width
+        self.maxHeight = windowHeight - self.height
+
+
+        # Pick a random starting position
+        self.x = random.randrange(0, self.maxWidth)
+        self.y = random.randrange(0, self.maxHeight)
+
+
+        # Choose a random speed between -4 and 4, but not zero,
+        # in both the x and y directions
+        speedsList = [-4, -3, -2, -1, 1, 2, 3, 4]
+        self.xSpeed = random.choice(speedsList)
+        self.ySpeed = random.choice(speedsList)
+
+
+    def update(self):
+        # Check for hitting a wall. If so, change that direction.
+        if (self.x < 0) or (self.x >= self.maxWidth):
+            self.xSpeed = -self.xSpeed
+           
+        if (self.y < 0) or (self.y >= self.maxHeight):
+            self.ySpeed = -self.ySpeed
+           
+        # Update the Ball's x and y, using the speed in two directions
+        self.x = self.x + self.xSpeed
+        self.y = self.y + self.ySpeed
+
+
+    def draw(self):
+        self.window.blit(self.image, (self.x, self.y))
+
+
+
+
+# SimpleButton class
+#
+# Uses a "state machine" approach
+#
+import pygame
+from pygame.locals import *
+
+
+class SimpleButton():
+    # Used to track the state of the button
+    STATE_IDLE = 'idle' # button is up, mouse not over button
+    STATE_ARMED = 'armed' # button is down, mouse over button
+    STATE_DISARMED = 'disarmed' # clicked down on button, rolled off
+
+
+    def __init__(self, window, loc, up, down):
+        self.window = window
+        self.loc = loc
+        self.surfaceUp = pygame.image.load(up)
+        self.surfaceDown = pygame.image.load(down)
+   
+        # Get the rect of the button (used to see if the mouse is over the button)
+        self.rect = self.surfaceUp.get_rect()
+        self.rect[0] = loc[0]
+        self.rect[1] = loc[1]
+        self.state = SimpleButton.STATE_IDLE
+
+
+    def handleEvent(self, eventObj):
+        # This method will return True if user clicks the button.
+        # Normally returns False.
+        if eventObj.type not in (MOUSEMOTION, MOUSEBUTTONUP, MOUSEBUTTONDOWN):
+            # The button only cares about mouse-related events
+            return False
+
+
+        eventPointInButtonRect = self.rect.collidepoint(eventObj.pos)
+   
+        if self.state == SimpleButton.STATE_IDLE:
+            if (eventObj.type == MOUSEBUTTONDOWN) and eventPointInButtonRect:
+                self.state = SimpleButton.STATE_ARMED
+        elif self.state == SimpleButton.STATE_ARMED:
+            if (eventObj.type == MOUSEBUTTONUP) and eventPointInButtonRect:
+                self.state = SimpleButton.STATE_IDLE
+                return True # clicked!
+            if (eventObj.type == MOUSEMOTION) and (not eventPointInButtonRect):
+                self.state = SimpleButton.STATE_DISARMED
+        elif self.state == SimpleButton.STATE_DISARMED:
+            if eventPointInButtonRect:
+                self.state = SimpleButton.STATE_ARMED
+            elif eventObj.type == MOUSEBUTTONUP:
+                self.state = SimpleButton.STATE_IDLE
+
+
+        return False
+
+
+    def draw(self):
+        # Draw the button's current appearance to the window
+        if self.state == SimpleButton.STATE_ARMED:
+            self.window.blit(self.surfaceDown, self.loc)
+        else: # IDLE or DISARMED
+            self.window.blit(self.surfaceUp, self.loc)
+
+
+
+
+# SimpleText class
+import pygame
+from pygame.locals import *
+
+
+class SimpleText():
+    def __init__(self, window, loc, value, textColor):
+        pygame.font.init()
+        self.window = window
+        self.loc = loc
+        self.font = pygame.font.SysFont(None, 30)
+        self.textColor = textColor
+        self.text = None # so that the call to setText below will
+                         # force the creation of the text image
+        self.setValue(value) # set the initial text for drawing
+       
+    def setValue(self, newText):
+        if self.text == newText:
+            return # nothing to change
+       
+        self.text = newText # save the new text
+        self.textSurface = self.font.render(self.text, True, self.textColor)
+
+
+    def draw(self):
+        self.window.blit(self.textSurface, self.loc)
