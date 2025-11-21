@@ -1,0 +1,473 @@
+# Libraries
+import pygame
+import sys
+from pygame.locals import *
+
+
+from Game import Game
+
+
+# Run game
+Game()
+
+
+
+
+
+# Libraries
+import pygame
+import sys
+from pygame.locals import *
+
+
+from Paddle import Paddle
+from Brick import Brick
+from Ball import Ball
+
+
+class Game():
+    # Game constants
+    WINDOW_WIDTH = 600
+    WINDOW_HEIGHT = 600
+    FPS = 30
+
+
+    PADDLE_SPEED = 5
+
+
+    COLORS = [
+        (255, 0, 0),
+        (255, 165, 0),
+        (255, 255, 0),
+        (0, 255, 0),
+        (0, 0, 255),
+        (75, 0, 130),
+        (128, 0, 255),
+        (255, 0, 255)
+    ]
+
+
+    # Inputs to move paddle
+    INPUTS = {
+        pygame.K_a : -1,
+        pygame.K_LEFT : -1,
+        pygame.K_d : 1,
+        pygame.K_RIGHT : 1
+    }
+
+
+    # Game states
+    PLAYING = 0
+    WIN = 1
+    LOSE = 2
+
+
+    # Initialize the game
+    def __init__(self):
+        pygame.init()
+
+
+        clock = pygame.time.Clock()
+
+
+        self.screen = pygame.display.set_mode((Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT))
+        self.lives = 3
+
+
+        self.bricks = []
+        self.paddle = Paddle((Game.WINDOW_WIDTH, Game.WINDOW_HEIGHT))
+        self.ball = Ball(self.paddle.x + Paddle.PADDLE_LENGTH/2, self.paddle.y - Ball.RADIUS*1.1)
+
+
+        self.state = Game.PLAYING
+        self.stage = 1
+
+
+        self.generate_bricks()
+
+
+        # Paddle direction
+        self.paddle_dir = 0
+
+
+        # Main game loop
+        while True:
+            # Listen for inputs
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key in Game.INPUTS:
+                        self.paddle_dir = Game.INPUTS[event.key]
+                elif event.type == pygame.KEYUP:
+                    if event.key in Game.INPUTS and self.paddle_dir == Game.INPUTS[event.key]:
+                        self.paddle_dir = 0
+
+
+            # Set FPS
+            clock.tick(Game.FPS)
+
+
+            # Clear screen
+            self.screen.fill((0, 0, 0))
+
+
+            # Check for win (advance stage)/loss
+            self.state_detection()
+
+
+            # Detect collisions
+            self.collide_detection()
+
+
+            # Update game elements
+            self.update()
+
+
+            # Check for stage clear
+            if len(self.bricks) == 0:
+                self.state = Game.WIN
+
+
+            # Check for life loss or losing the game
+            if self.check_off_screen():
+                self.lives -= 1
+
+
+                self.ball.reset()
+
+
+                if self.lives < 0:
+                    self.state = Game.LOSE
+
+
+            # Render game elements
+            self.draw()
+
+
+            pygame.display.flip()
+
+
+    # Generate bricks for a stage
+    def generate_bricks(self):
+        for y in range(8):
+            for x in range(8):
+                newBrick = Brick(self.screen, Game.WINDOW_WIDTH/24 + x*(Brick.BRICK_LENGTH + 10), 20 + y*(Brick.BRICK_WIDTH + 5), Game.COLORS[y])
+
+
+                self.bricks.append(newBrick)
+
+
+    # Access to calculation to move the ball:
+    def move_ball(self):
+        self.ball.calculation((self.paddle, self.bricks))
+
+
+    # Access to move_paddle:
+    def move_paddle(self):
+        self.paddle.move_paddle(self.paddle_dir*Game.PADDLE_SPEED)
+
+
+    # Handle collisions + bounce ball
+    def collide_detection(self):
+        # Bounce ball off screen
+        if self.ball.x <= Ball.RADIUS or self.ball.x >= Game.WINDOW_WIDTH - Ball.RADIUS:
+            self.ball.x_speed *= -1
+
+
+            self.move_ball()
+
+
+        if self.ball.y <= Ball.RADIUS:
+            self.ball.y_speed *= -1
+
+
+            self.move_ball()
+
+
+        # Ball colliding with paddle
+        paddle_rect = pygame.Rect(self.paddle.x, self.paddle.y, Paddle.PADDLE_LENGTH, Paddle.PADDLE_WIDTH)
+        ball_rect = pygame.Rect(self.ball.x - Ball.RADIUS, self.ball.y - Ball.RADIUS, Ball.RADIUS*2, Ball.RADIUS*2)
+
+
+        if paddle_rect.colliderect(ball_rect):
+            self.ball.calculation((self.paddle, self.bricks), self.paddle)
+
+
+        # Ball colliding with a brick
+        for brick in self.bricks:
+            brick_rect = pygame.Rect(brick.x, brick.y, Brick.BRICK_LENGTH, Brick.BRICK_WIDTH)
+
+
+            if brick_rect.colliderect(ball_rect):
+                self.ball.calculation((self.paddle, self.bricks), brick)
+
+
+                self.bricks.remove(brick)
+
+
+                break
+   
+    # Detect if the ball is out of the screen (lose life/lose)
+    def check_off_screen(self):
+        if self.ball.y >= Game.WINDOW_HEIGHT:
+            return True
+       
+        return False
+
+
+    # Detect if game is in a win or lose state (win = advance stage)
+    def state_detection(self):
+        if self.state == Game.WIN:
+            self.stage += 1
+
+
+            self.generate_bricks()
+
+
+            self.state = Game.PLAYING
+
+
+            self.ball.reset()
+        elif self.state == Game.LOSE:
+            print("You suck")
+
+
+            pygame.quit()
+            sys.exit()
+   
+    # Update all game elements
+    def update(self):
+        # Move paddle when inputs are detected
+        self.move_paddle()
+
+
+        # Move ball
+        self.move_ball()
+
+
+    # Render all game elements
+    def draw(self):
+        # Import font
+        font = pygame.font.SysFont("Verdana", 30)
+
+
+        # Draw paddle
+        pygame.draw.rect(self.screen, Paddle.PADDLE_COLOR, (self.paddle.x, self.paddle.y, Paddle.PADDLE_LENGTH, Paddle.PADDLE_WIDTH))
+
+
+        # Draw bricks
+        for brick in self.bricks:
+            brick.create_brick()
+
+
+        # Draw ball
+        pygame.draw.circle(self.screen, Ball.BALL_COLOR, (self.ball.x, self.ball.y), Ball.RADIUS)
+
+
+        # UI holder at bottom
+        pygame.draw.rect(self.screen, (255, 255, 255), (-1, Game.WINDOW_HEIGHT/1.1, Game.WINDOW_WIDTH + 1, Game.WINDOW_HEIGHT/2))
+        pygame.draw.rect(self.screen, (0, 0, 0), (-1, Game.WINDOW_HEIGHT/1.1 + 2, Game.WINDOW_WIDTH + 1, Game.WINDOW_HEIGHT/2))
+
+
+        # Text UI display
+        # For stage
+        stage_text = font.render("Stage " + str(self.stage), True, (255, 255, 255))
+       
+        self.screen.blit(stage_text, (Game.WINDOW_WIDTH - 150, Game.WINDOW_HEIGHT/1.1 + 5))
+
+
+        # For lives
+        lives_text = font.render("Lives:", True, (255, 255, 255))
+       
+        self.screen.blit(lives_text, (0, Game.WINDOW_HEIGHT/1.1 + 5))
+
+
+        for i in range(self.lives):
+            pygame.draw.circle(self.screen, Ball.BALL_COLOR, (110 + Ball.RADIUS*i*2.5, Game.WINDOW_HEIGHT/1.05), Ball.RADIUS)
+
+
+
+
+
+
+
+
+# Libraries
+import pygame
+import sys
+import random
+import math
+import time
+from pygame.locals import *
+
+
+class Ball():
+    # Ball configuration constants
+    RADIUS = 10
+    BALL_COLOR = (255, 255, 255)
+
+
+    # Initialize a brick
+    def __init__(self, x_pos, y_pos):
+        self.x = x_pos
+        self.y = y_pos
+        self.x_speed = random.randint(-2, 2)
+        self.y_speed = -3
+        self.og_x = self.x
+        self.og_y = self.y
+
+
+        if self.x_speed == 0:
+            self.x_speed = 2
+
+
+    # Calculate new direction and speed after colliding with a brick + move ball
+    def calculation(self, collidables, collided_with = None):
+        move_dir = self.get_direction()
+
+
+        if collided_with:
+            if self.y < collided_with.y or self.y > collided_with.y + collided_with.size[1]:
+                inc = (math.log(abs(self.y_speed), 10)*self.y_speed/abs(self.y_speed))/2.5
+
+
+                if abs(self.y_speed) >= 10:
+                    inc = 0
+
+
+                self.y_speed = -(self.y_speed + inc)
+           
+            if self.x < collided_with.x or self.x > collided_with.x + collided_with.size[0]:
+                x_difference = self.x - collided_with.x + collided_with.size[0]/2
+
+
+                self.x_speed = x_difference/40
+
+
+                self.x += self.x_speed*0.2
+
+
+        clipped_point = self.clipped(collidables)
+       
+        if clipped_point:
+            clipped_point = clipped_point[0]
+
+
+            self.x = clipped_point[0] - move_dir[0]*Ball.RADIUS
+            self.y = clipped_point[1] - move_dir[1]*Ball.RADIUS
+        else:
+            self.x += self.x_speed
+            self.y += self.y_speed
+
+
+    # Reset ball's y speed to the initial value and put it back in the initial position
+    def reset(self):
+        self.y_speed = -3
+
+
+        self.x = self.og_x
+        self.y = self.og_y
+
+
+    # Check for clipping with objects, return point of clipping if possible
+    def clipped(self, collidables):
+        move_dir = self.get_direction()
+        magnitude = self.get_speed()
+
+
+        move_vector = (move_dir[0]*magnitude, move_dir[1]*magnitude)
+
+
+        for obj in collidables:
+            # Raycast, kind of
+            rect = pygame.Rect(obj.x, obj.y, obj.size[0], obj.size[1])
+
+
+            hit_pos = rect.clipline((self.x, self.y), (self.x + move_vector[0], self.y + move_vector[1]))
+
+
+            return hit_pos
+
+
+        return None
+   
+    # Return vector direction of the ball's movement
+    def get_direction(self):
+        magnitude = self.get_speed()
+       
+        return (self.x_speed/magnitude, self.y_speed/magnitude)
+   
+    # Return calculated speed of the ball
+    def get_speed(self):
+        return abs(math.sqrt(self.x_speed**2 + self.y_speed**2))
+
+
+
+
+
+
+
+# Libraries
+import pygame
+import sys
+from pygame.locals import *
+
+
+class Brick():
+    # Brick configuration constants
+    BRICK_WIDTH = 20
+    BRICK_LENGTH = 60
+
+
+    # Initialize a brick
+    def __init__(self, screen, x_pos, y_pos, color):
+        self.screen = screen
+        self.x = x_pos
+        self.y = y_pos
+        self.size = (Brick.BRICK_LENGTH, Brick.BRICK_WIDTH)
+        self.color = color
+
+
+    # Render brick
+    def create_brick(self):
+        pygame.draw.rect(self.screen, self.color, (self.x, self.y, Brick.BRICK_LENGTH, Brick.BRICK_WIDTH))
+        pygame.draw.rect(self.screen, tuple(x * 0.25 for x in self.color), (self.x, self.y, Brick.BRICK_LENGTH, Brick.BRICK_WIDTH), 2)
+
+
+
+
+
+
+
+
+
+# Libraries
+import pygame
+import sys
+from pygame.locals import *
+
+
+class Paddle():
+    # Paddle configuration constants
+    PADDLE_WIDTH = 10
+    PADDLE_LENGTH = 100
+    PADDLE_COLOR = (255, 255, 255)
+
+
+    # Initialize the paddle
+    def __init__(self, resolution):
+        screen_length, screen_height = resolution[0], resolution[1]
+
+
+        self.bound_x = screen_length - Paddle.PADDLE_LENGTH
+        self.bound_y = screen_height - Paddle.PADDLE_WIDTH
+        self.x = screen_length/2
+        self.y = screen_height/1.2
+        self.size = (Paddle.PADDLE_LENGTH, Paddle.PADDLE_WIDTH)
+
+
+    # Move paddle left or right by amount vectorDirection and render it
+    def move_paddle(self, vector_direction):
+        self.x = max(min(self.x + vector_direction, self.bound_x), 0)
